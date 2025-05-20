@@ -31,7 +31,7 @@ public class Match {
             cascade = CascadeType.ALL,
             orphanRemoval = true,
             mappedBy = "match")
-    private List<MatchParticipants> participants;
+    private List<MatchParticipant> participants;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event-id", nullable = false)
