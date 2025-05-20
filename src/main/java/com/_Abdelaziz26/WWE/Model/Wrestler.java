@@ -30,7 +30,7 @@ public class Wrestler {
     private PlayerStatus status;
 
     @OneToMany(orphanRemoval = false, fetch = FetchType.LAZY, mappedBy = "wrestler")
-    private List<MatchParticipants> matchParticipants;
+    private List<MatchParticipant> matchParticipants;
 
     @OneToMany(mappedBy = "wrestler", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Championship> championships;
