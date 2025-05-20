@@ -1,0 +1,25 @@
+package com._Abdelaziz26.WWE.Responses;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
+public class ApiResponse <T>{
+
+    private T data;
+    private Boolean success;
+    private String message;
+
+    public ApiResponse(Boolean success, String message) {
+        this.success = success;
+        this.message = message;
+    }
+
+    public ApiResponse(Boolean success, T data) {
+        this.success = success;
+        this.data = data;
+    }
+}
