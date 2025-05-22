@@ -17,7 +17,7 @@ public class Genre {
 
     @NotBlank
     @Column(nullable = false, unique = true)
-    private String genre;
+    private String name;
 
     @OneToMany(mappedBy = "genre")
     private List<Game> games;
