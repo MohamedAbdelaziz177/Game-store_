@@ -1,9 +1,14 @@
 package com._Abdelaziz26.Game.Model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.Date;
 
 @Entity
 @Table(name = "reviews")
@@ -15,4 +20,20 @@ public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+
+    @NotNull
+    @Min(0)
+    @Max(5)
+    private int rating;
+
+    private String comment;
+
+    private Date CreatedAt = new Date(System.currentTimeMillis());
+
+    @ManyToOne()
+    private Game game;
+
+    @ManyToOne()
+    private User user;
 }

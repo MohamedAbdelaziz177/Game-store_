@@ -18,7 +18,11 @@ public class Game {
 
     private String imageUrl;
 
-    @ManyToOne
+    @Column(nullable = false)
+    private double price;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "genre-id")
     private Genre genre;
 
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL)
@@ -26,6 +30,15 @@ public class Game {
 
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL)
     private List<Review> reviews;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+
+            name = "games-platforms",
+            joinColumns = @JoinColumn(name = "game-id", nullable = false),
+            inverseJoinColumns = @JoinColumn(name = "platform-id", nullable = false)
+    )
+    private List<Platform> platforms;
 
 
 }
