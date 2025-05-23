@@ -1,6 +1,8 @@
 package com._Abdelaziz26.Game.Model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 import java.util.List;
 
@@ -12,8 +14,12 @@ public class Game {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank
+    @Size(min = 2, max = 50)
+    @Column(nullable = false)
     private String name;
 
+    @Size(min = 2, max = 300)
     private String description;
 
     private String imageUrl;

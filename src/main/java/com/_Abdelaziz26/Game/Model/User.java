@@ -20,6 +20,12 @@ public class User {
 
 
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Wishlist> wishlists;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Review> reviews;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Purchase> purchases;
 }

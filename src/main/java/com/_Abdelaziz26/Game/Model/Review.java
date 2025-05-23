@@ -31,9 +31,11 @@ public class Review {
 
     private Date CreatedAt = new Date(System.currentTimeMillis());
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "game-id")
     private Game game;
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user-id")
     private User user;
 }
