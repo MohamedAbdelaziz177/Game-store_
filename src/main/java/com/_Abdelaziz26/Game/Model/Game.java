@@ -1,14 +1,24 @@
 package com._Abdelaziz26.Game.Model;
 
+import com._Abdelaziz26.Game.DTOs.Game.CreateGameDto;
+import com._Abdelaziz26.Game.DTOs.Game.UpdateGameDto;
+import com._Abdelaziz26.Game.Utility.FileStorageService;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Entity
 @Table(name = "games")
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
 public class Game {
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
