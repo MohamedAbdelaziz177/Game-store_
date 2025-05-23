@@ -17,14 +17,14 @@ public class FileStorageService {
     @Value("${storage.dir}")
     private static String PARENT_DIR;
 
-    public String SaveImgAndGetUrl(MultipartFile file, String subfolder) throws IOException {
+    public String SaveImgAndGetUrl(MultipartFile file) throws IOException {
 
         if(file == null || file.isEmpty() ) {
             throw new NullPointerException("File is null or empty");
         }
 
         File targetFile = new File(PARENT_DIR + File.separator +
-                subfolder + File.separator + file.getOriginalFilename());
+                File.separator + file.getOriginalFilename());
 
         if(!Objects.equals(targetFile.getParentFile().getAbsolutePath(), PARENT_DIR))
             throw new SecurityException("Unsupported file name");
