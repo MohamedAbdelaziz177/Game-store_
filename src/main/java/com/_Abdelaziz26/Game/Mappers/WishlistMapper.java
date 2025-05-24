@@ -2,7 +2,9 @@ package com._Abdelaziz26.Game.Mappers;
 
 import com._Abdelaziz26.Game.DTOs.Whishlist.WishListItemDto;
 import com._Abdelaziz26.Game.Model.Wishlist;
+import org.springframework.stereotype.Service;
 
+@Service
 public class WishlistMapper {
 
     public  WishListItemDto toDto(Wishlist wishlist){

@@ -8,7 +8,9 @@ import com._Abdelaziz26.Game.Model.Purchase;
 import com._Abdelaziz26.Game.Repositories.GameRepository;
 import com._Abdelaziz26.Game.Repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
+@Service
 @RequiredArgsConstructor
 public class PurchaseMapper {
 
