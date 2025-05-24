@@ -6,17 +6,22 @@ import com._Abdelaziz26.Game.DTOs.Game.ReadGameDto;
 import com._Abdelaziz26.Game.DTOs.Game.UpdateGameDto;
 import com._Abdelaziz26.Game.Model.Game;
 import com._Abdelaziz26.Game.Model.Platform;
+import com._Abdelaziz26.Game.Repositories.GameRepository;
 import com._Abdelaziz26.Game.Repositories.GenreRepository;
 import com._Abdelaziz26.Game.Repositories.PlatformRepository;
 import com._Abdelaziz26.Game.Utility.FileStorageService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
+@Service
 @RequiredArgsConstructor
 public class GameMapper {
 
     private final FileStorageService fileStorageService;
     private final GenreRepository genreRepository;
     private final PlatformRepository platformRepository;
+    private final GameRepository gameRepository;
 
     public Game fromDto(CreateGameDto createGameDto) {
 
@@ -43,7 +48,7 @@ public class GameMapper {
         return game;
     }
 
-    public static ReadGameDto toDto(Game game) {
+    public  ReadGameDto toDto(Game game) {
 
         ReadGameDto readGameDto = new ReadGameDto();
 
@@ -68,9 +73,10 @@ public class GameMapper {
         return  readGameDto;
     }
 
-    public  Game fromDto(UpdateGameDto updateGameDto) {
+    public  Game fromDto(Long id, UpdateGameDto updateGameDto) {
 
-        Game game = new Game();
+        Game game = gameRepository.findById(id).orElseThrow(() ->
+                new EntityNotFoundException("Game not found"));
 
         game.setName(updateGameDto.getName());
         game.setDescription(updateGameDto.getDescription());

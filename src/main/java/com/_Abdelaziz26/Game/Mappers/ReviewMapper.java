@@ -5,16 +5,27 @@ import com._Abdelaziz26.Game.DTOs.Review.ReadReviewDto;
 import com._Abdelaziz26.Game.DTOs.Review.UpdateReviewDto;
 import com._Abdelaziz26.Game.Model.Review;
 import com._Abdelaziz26.Game.Model.User;
+import com._Abdelaziz26.Game.Repositories.GameRepository;
+import com._Abdelaziz26.Game.Repositories.ReviewRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.Locked;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
+@Service
+@RequiredArgsConstructor
 public class ReviewMapper {
 
 
 
-    public Review fromDto(CreateReviewDto createReviewDto) {
+    private final GameRepository gameRepository;
+    private final ReviewRepository reviewRepository;
+
+    public Review fromDto(CreateReviewDto createReviewDto, User user, Long gameId) {
         return Review.builder()
                 .comment(createReviewDto.getContent())
                 .rating(createReviewDto.getRating())
+                .game(gameRepository.findById(gameId).orElseThrow(() -> new EntityNotFoundException("Game not found")))
                 .build();
     }
 
@@ -27,11 +38,15 @@ public class ReviewMapper {
                 .build();
     }
 
-    public Review toDto(UpdateReviewDto updateReviewDto, User user) {
-        return Review.builder()
-                .comment(updateReviewDto.getContent())
-                .rating(updateReviewDto.getRating())
-                .user(user)
-                .build();
+    public Review toDto(UpdateReviewDto updateReviewDto, Long id) {
+
+        Review review = reviewRepository.findById(id).orElseThrow(() ->
+                new EntityNotFoundException("Review not found"));
+
+        review.setComment(updateReviewDto.getContent());
+        review.setRating(updateReviewDto.getRating());
+
+
+        return review;
     }
 }
