@@ -9,6 +9,10 @@ import com._Abdelaziz26.Game.Model.Game;
 import com._Abdelaziz26.Game.Repositories.GameRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -25,16 +29,32 @@ public class GameService {
     private final GameRepository gameRepository;
     private final GameMapper mapper;
 
+    @Caching(
+            evict = @CacheEvict(value = "ALL_GAMES_CACHE", allEntries = true),
+            put = @CachePut(value = "GAME_CACHE", key = "#result.id")
+    )
     public ReadGameDto addGame(CreateGameDto dto)
     {
         return mapper.toDto(gameRepository.save(mapper.fromDto(dto)));
     }
 
+
+
+    @Caching(
+            evict = @CacheEvict(value = "ALL_GAMES_CACHE", allEntries = true),
+            put = @CachePut(value = "GAME_CACHE", key = "#id")
+    )
     public ReadGameDto updateGame(Long id, UpdateGameDto dto)
     {
         return mapper.toDto(gameRepository.save(mapper.fromDto(id, dto)));
     }
 
+    @Caching(
+            evict = {
+                    @CacheEvict(value = "GAME_CACHE", key = "#id"),
+                    @CacheEvict(value = "ALL_GAMES_CACHE", allEntries = true)
+            }
+    )
     public void deleteGame(Long id)
     {
         Game game = gameRepository.findById(id).orElseThrow(() ->
@@ -43,6 +63,8 @@ public class GameService {
         gameRepository.delete(game);
     }
 
+
+    @Cacheable(value = "GAME_CACHE", key = "#id")
     public ReadGameDto getGameById(Long id)
     {
         Game game = gameRepository.findById(id).orElseThrow(() ->
@@ -53,6 +75,8 @@ public class GameService {
 
 
 
+
+    @Cacheable(value = "ALL_GAMES_CACHE")
     public List<GameCardDto> getAllGames(int pageIndex, int pageSize, String sortField, String sortDirection)
     {
         Pageable pageable = getPageAndSorting(pageIndex, pageSize, sortField, sortDirection);
@@ -64,6 +88,7 @@ public class GameService {
     }
 
 
+    @Cacheable(value = "ALL_GAMES_CACHE")
     public List<GameCardDto> filterGames( int pageIndex,
                                     int pageSize,
                                     String sortField,
