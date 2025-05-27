@@ -52,6 +52,8 @@ public class GameMapper {
 
         ReadGameDto readGameDto = new ReadGameDto();
 
+        readGameDto.setId(game.getId());
+
         readGameDto.setName(game.getName());
 
         readGameDto.setDescription(game.getDescription());
