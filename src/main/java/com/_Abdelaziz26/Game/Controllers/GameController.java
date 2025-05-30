@@ -1,10 +1,106 @@
 package com._Abdelaziz26.Game.Controllers;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com._Abdelaziz26.Game.DTOs.Game.CreateGameDto;
+import com._Abdelaziz26.Game.DTOs.Game.GameCardDto;
+import com._Abdelaziz26.Game.DTOs.Game.ReadGameDto;
+import com._Abdelaziz26.Game.DTOs.Game.UpdateGameDto;
+import com._Abdelaziz26.Game.Model.Game;
+import com._Abdelaziz26.Game.Responses.ApiResponse;
+import com._Abdelaziz26.Game.Services.GameService;
+import com._Abdelaziz26.Game.Utility.GameSpecifications;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/game")
+@RequiredArgsConstructor
 public class GameController {
 
+    private final GameService gameService;
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<ReadGameDto>> getGameById(@PathVariable Long id) {
+
+        ApiResponse<ReadGameDto> res = new ApiResponse<>();
+
+        res.setData(gameService.getGameById(id));
+        res.setSuccess(true);
+        res.setMessage("Games retrieved successfully");
+
+        return ResponseEntity.ok(res);
+    }
+
+    @GetMapping("/")
+    public ResponseEntity<ApiResponse<List<GameCardDto>>> getAllGames (
+                                         @RequestParam(defaultValue = "1") int pageIdx,
+                                         @RequestParam(defaultValue = "8") int pageSize,
+                                         @RequestParam(required = false) String sortField,
+                                         @RequestParam(defaultValue = "asc") String sortDirection,
+                                         @RequestParam(required = false) String genre,
+                                         @RequestParam(required = false) String genreValue,
+                                         @RequestParam(required = false) String platform,
+                                         @RequestParam(required = false) String platformValue,
+                                         @RequestParam(required = false) String search
+    ) {
+
+        //Specification<Game> spec = Specification.where(null);
+        //
+        //if(genre != null)
+        //    spec = spec.and(GameSpecifications.hasField(genre, genreValue));
+        //
+        //
+        //if(platform != null)
+        //    spec = spec.and(GameSpecifications.hasField(platform, platformValue));
+        //
+        //if(search != null)
+        //    spec = spec.and(GameSpecifications.hasFieldLike(search, search));
+
+
+        ApiResponse<List<GameCardDto>> res = new ApiResponse<>();
+
+        res.setData(gameService.getAllGames(pageIdx, pageSize, sortField, sortDirection));
+        res.setSuccess(true);
+        res.setMessage("Games retrieved successfully");
+
+
+        return ResponseEntity.ok(res);
+
+    }
+
+    @PostMapping("/")
+    public ResponseEntity<ApiResponse<ReadGameDto>> addGame(@RequestBody CreateGameDto game) {
+
+        ApiResponse<ReadGameDto> res = new ApiResponse<>();
+
+        res.setData(gameService.addGame(game));
+        res.setSuccess(true);
+        res.setMessage("Game added successfully");
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(res);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteGame(@PathVariable Long id) {
+
+        gameService.deleteGame(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<ReadGameDto>> updateGame(@PathVariable Long id, UpdateGameDto updateGameDto) {
+
+        ApiResponse<ReadGameDto> res = new ApiResponse<>();
+
+        res.setData(gameService.updateGame(id, updateGameDto));
+        res.setSuccess(true);
+        res.setMessage("Game updated successfully");
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(res);
+    }
 }
