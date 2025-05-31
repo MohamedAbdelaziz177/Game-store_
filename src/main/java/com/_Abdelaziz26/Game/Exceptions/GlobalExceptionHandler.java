@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -54,12 +55,19 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(res);
     }
 
+    @ExceptionHandler(AuthenticationServiceException.class)
+    public ResponseEntity<ApiResponse<Void>> handleAuthenticationServiceException(AuthenticationServiceException ex){
+        ApiResponse<Void> res = logErrorAndCreateFailureResponse(ex);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleException(Exception ex){
 
         ApiResponse<Void> res = logErrorAndCreateFailureResponse(ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(res);
     }
+
 
     private ApiResponse<Void> logErrorAndCreateFailureResponse(Exception ex){
 
