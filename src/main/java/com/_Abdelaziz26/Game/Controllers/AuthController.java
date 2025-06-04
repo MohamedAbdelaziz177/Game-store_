@@ -18,11 +18,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 @RestController
+@RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
+
     private final AuthService authService;
 
     @PostMapping("/register")
@@ -89,15 +92,17 @@ public class AuthController {
     }
 
     @PostMapping("/resend-confirmation-code")
-    public ResponseEntity<ApiResponse<String>> ResendConfirmationCode(@RequestParam String email /*must be in req body*/) {
+    public ResponseEntity<ApiResponse<String>> ResendConfirmationCode(@RequestBody Map<String, String>mp /*must be in req body*/) {
 
         ApiResponse<String> res = new ApiResponse<>();
 
-        authService.sendOtpToUser(email);
+        authService.sendOtpToUser(mp.get("email"));
 
         res.setSuccess(true);
         res.setData("Confirmation code sent successfully");
         return ResponseEntity.status(HttpStatus.OK).body(res);
 
     }
+
+
 }

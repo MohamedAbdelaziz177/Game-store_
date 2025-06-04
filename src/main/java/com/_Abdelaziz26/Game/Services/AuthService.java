@@ -18,6 +18,8 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -41,6 +43,8 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+
+    private final static Logger logger = LoggerFactory.getLogger(AuthService.class);
 
     @Value("${app.env}")
     private String APP_ENV;
@@ -83,25 +87,29 @@ public class AuthService {
 
     public AuthResponse register(RegisterDto registerDto) {
 
+        logger.info("email is: " + registerDto.getEmail());
         Optional<User> user1 = userRepository.findByEmail(registerDto.getEmail());
 
         if(user1.isPresent())
             throw new AuthenticationServiceException("User already exists");
 
-        Role role = roleRepository.findByName("ROLE_USER").orElseThrow();
+        Role role = roleRepository.findByName("ROLE_USER").orElseThrow(() -> new NoSuchElementException("No such Role"));
 
         User user = User.builder()
                 .email(registerDto.getEmail())
                 .password(passwordEncoder.encode(registerDto.getPassword()))
                 .firstName(registerDto.getFirstName())
                 .lastName(registerDto.getLastName())
-                .roles(List.of(role))
+                .roles(new ArrayList<Role>(List.of(role)))
                 .build();
 
 
+        role.getUsers().add(user);
+
         userRepository.save(user);
 
-        sendOtpToUser(registerDto.getEmail());
+
+        sendOtpToUser(user);
 
         return AuthResponse.builder()
                 .message("User Registered Successfully - plz check ur email for confirmation")
@@ -140,14 +148,23 @@ public class AuthService {
         user.setVerificationCodeExpiryDate(new Date(System.currentTimeMillis() + 86400000));
         user.setVerified(false);
 
-        //متنساش تسيف بعد كدا الله يرضى عنك
+
         userRepository.save(user);
     }
 
     public void sendOtpToUser(String email){
 
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new NoSuchElementException("No such user found"));
-        sendOtpToUser(user);
+        logger.info("email is: " + email);
+
+        Optional<User> user = userRepository.findByEmail(email);
+
+        if(user.isEmpty())
+        {
+            logger.error("User not found");
+            throw new NoSuchElementException("User not found");
+        }
+
+        sendOtpToUser(user.get());
     }
 
     public void confirmEmail(ConfirmEmailDto confirmEmailDto)
