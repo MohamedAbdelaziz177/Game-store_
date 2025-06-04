@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/game")
+@RequestMapping("/api/game")
 @RequiredArgsConstructor
 public class GameController {
 
@@ -38,10 +38,10 @@ public class GameController {
 
     @GetMapping("/")
     public ResponseEntity<ApiResponse<List<GameCardDto>>> getAllGames (
-                                         @RequestParam(defaultValue = "1") int pageIdx,
+                                         @RequestParam(defaultValue = "0") int pageIdx,
                                          @RequestParam(defaultValue = "8") int pageSize,
                                          @RequestParam(required = false) String sortField,
-                                         @RequestParam(defaultValue = "asc") String sortDirection,
+                                         @RequestParam(required = false, defaultValue = "asc") String sortDirection,
                                          @RequestParam(required = false) String genre,
                                          @RequestParam(required = false) String genreValue,
                                          @RequestParam(required = false) String platform,
@@ -64,17 +64,20 @@ public class GameController {
 
         ApiResponse<List<GameCardDto>> res = new ApiResponse<>();
 
+        if(sortField != null)
         res.setData(gameService.getAllGames(pageIdx, pageSize, sortField, sortDirection));
+
+        else res.setData(gameService.getAllGames(pageIdx, pageSize));
+
         res.setSuccess(true);
         res.setMessage("Games retrieved successfully");
-
 
         return ResponseEntity.ok(res);
 
     }
 
     @PostMapping("/")
-    public ResponseEntity<ApiResponse<ReadGameDto>> addGame(@RequestBody CreateGameDto game) {
+    public ResponseEntity<ApiResponse<ReadGameDto>> addGame(@ModelAttribute CreateGameDto game) {
 
         ApiResponse<ReadGameDto> res = new ApiResponse<>();
 

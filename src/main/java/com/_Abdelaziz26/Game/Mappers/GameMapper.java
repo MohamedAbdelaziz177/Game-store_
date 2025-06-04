@@ -103,6 +103,6 @@ public class GameMapper {
     }
 
     public GameCardDto toDto(Game game, boolean card){
-        return new GameCardDto(game.getId(), game.getName(), game.getImageUrl());
+        return new GameCardDto(game.getId(), game.getName(), game.getImageUrl(), game.getPrice());
     }
 }

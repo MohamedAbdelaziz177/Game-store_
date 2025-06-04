@@ -81,10 +81,20 @@ public class GameService {
     {
         Pageable pageable = getPageAndSorting(pageIndex, pageSize, sortField, sortDirection);
 
-        Page<Game> games = gameRepository.findAll(pageable);
+        List<Game> games = gameRepository.findAll();
 
         return games.stream().map(game -> mapper.toDto(game, true)).toList();
 
+    }
+
+    @Cacheable(value = "ALL_GAMES_CACHE")
+    public List<GameCardDto> getAllGames(int pageIndex, int pageSize)
+    {
+        Pageable pageable = PageRequest.of(pageIndex, pageSize);
+
+        Page<Game> games = gameRepository.findAll(pageable);
+
+        return games.stream().map(game -> mapper.toDto(game, true)).toList();
     }
 
 
