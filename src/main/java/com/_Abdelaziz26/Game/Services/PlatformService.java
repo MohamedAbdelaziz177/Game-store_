@@ -19,7 +19,7 @@ public class PlatformService {
         return platformRepository.existsById(platformId);
     }
 
-    public void AddPlatform(String platform) {
+    public void addPlatform(String platform) {
 
         Platform platform1 = new Platform();
 
@@ -28,7 +28,7 @@ public class PlatformService {
         platformRepository.save(platform1);
     }
 
-    public void DeletePlatform(Long platformId) {
+    public void deletePlatform(Long platformId) {
 
         Platform platform = platformRepository.findById(platformId).orElseThrow(() ->
                 new EntityNotFoundException("Platform with id " + platformId + " not found"));
@@ -36,7 +36,7 @@ public class PlatformService {
         platformRepository.delete(platform);
     }
 
-    public void AddGameToPlatform(Long gameId, Long platformId) {
+    public void assignGameToPlatform(Long gameId, Long platformId) {
 
         Game game = gameRepository.findById(gameId).orElseThrow(() ->
                 new EntityNotFoundException("Game with id " + gameId + " not found"));
@@ -49,7 +49,7 @@ public class PlatformService {
 
     }
 
-    public void DeleteGameFromPlatform(Long gameId, Long platformId) {
+    public void deleteGameFromPlatform(Long gameId, Long platformId) {
 
         Game game = gameRepository.findById(gameId).orElseThrow(() ->
                 new EntityNotFoundException("Game with id " + gameId + " not found"));
