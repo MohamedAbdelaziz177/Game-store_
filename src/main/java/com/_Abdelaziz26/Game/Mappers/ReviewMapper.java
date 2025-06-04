@@ -17,8 +17,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ReviewMapper {
 
-
-
     private final GameRepository gameRepository;
     private final ReviewRepository reviewRepository;
 

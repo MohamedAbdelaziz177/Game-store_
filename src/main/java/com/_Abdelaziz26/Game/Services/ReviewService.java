@@ -12,9 +12,12 @@ import com._Abdelaziz26.Game.Repositories.ReviewRepository;
 import com._Abdelaziz26.Game.Repositories.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -25,10 +28,10 @@ public class ReviewService {
     private final GameRepository gameRepository;
     private final UserRepository userRepository;
 
-    public ReadReviewDto addReview(User user , CreateReviewDto createReviewDto, Long gameId) {
+    public ReadReviewDto addReview(@AuthenticationPrincipal User user, CreateReviewDto createReviewDto, Long gameId) {
 
         Review review = reviewMapper.fromDto(createReviewDto, user, gameId);
-        return reviewMapper.toDto(reviewRepository.save(review)) ;
+        return reviewMapper.toDto(reviewRepository.save(review));
     }
 
     public List<ReadReviewDto> getAllGameReviews(Long gameId) {
@@ -50,8 +53,22 @@ public class ReviewService {
         // try -  return user.getReviews().stream().map(reviewMapper::toDto).toList();
     }
 
-    public ReadReviewDto updateReview(User user, UpdateReviewDto updateReviewDto, Long reviewId) {
+    public ReadReviewDto updateReview(@AuthenticationPrincipal User user,
+                                      UpdateReviewDto updateReviewDto,
+                                      Long reviewId) {
         return reviewMapper.toDto(reviewRepository.save(reviewMapper.toDto(updateReviewDto, reviewId)));
+    }
+
+    public void deleteReview(Long reviewId, @AuthenticationPrincipal User user) {
+
+        Review review = reviewRepository.findById(reviewId).orElseThrow(() ->
+                new EntityNotFoundException("Review not found"));
+
+        if (!Objects.equals(review.getUser().getId(), user.getId())) {
+            throw new AccessDeniedException("You are not authorized to delete this review");
+        }
+
+        reviewRepository.deleteById(reviewId);
     }
 
 }
