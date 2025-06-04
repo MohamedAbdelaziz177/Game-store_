@@ -10,6 +10,7 @@ import com._Abdelaziz26.Game.Repositories.ReviewRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.Locked;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,10 +22,11 @@ public class ReviewMapper {
     private final GameRepository gameRepository;
     private final ReviewRepository reviewRepository;
 
-    public Review fromDto(CreateReviewDto createReviewDto, User user, Long gameId) {
+    public Review fromDto(CreateReviewDto createReviewDto, @AuthenticationPrincipal User user, Long gameId) {
         return Review.builder()
                 .comment(createReviewDto.getContent())
                 .rating(createReviewDto.getRating())
+                .user(user)
                 .game(gameRepository.findById(gameId).orElseThrow(() -> new EntityNotFoundException("Game not found")))
                 .build();
     }
