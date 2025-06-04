@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -54,7 +55,7 @@ public class Game {
             joinColumns = @JoinColumn(name = "game-id", nullable = false),
             inverseJoinColumns = @JoinColumn(name = "platform-id", nullable = false)
     )
-    private List<Platform> platforms;
+    private List<Platform> platforms = new ArrayList<>();
 
 
 }
