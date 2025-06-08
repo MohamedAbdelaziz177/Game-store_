@@ -9,6 +9,9 @@ import com._Abdelaziz26.Game.Repositories.GameRepository;
 import com._Abdelaziz26.Game.Repositories.WishlistRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -22,7 +25,8 @@ public class WishlistService {
     private final GameRepository gameRepository;
     private final WishlistMapper wishlistMapper;
 
-    public void wishGame(User user, Long gameId) {
+
+    public void wishGame(@AuthenticationPrincipal User user, Long gameId) {
 
         Game game = gameRepository.findById(gameId).orElseThrow(EntityNotFoundException::new);
         Wishlist wish = new Wishlist();
@@ -33,7 +37,7 @@ public class WishlistService {
         wishlistRepository.save(wish);
     }
 
-    public void unwishGame(User user, Long gameId) {
+    public void unwishGame(@AuthenticationPrincipal User user, Long gameId) {
 
         Wishlist wish = wishlistRepository.findByUser_IdAndGame_id(user.getId(), gameId).orElseThrow(() ->
                 new EntityNotFoundException("Wishlist not found"));
@@ -43,7 +47,8 @@ public class WishlistService {
 
     }
 
-    public List<WishListItemDto> getWishlist(User user) {
+    @Cacheable(value = "WishedGames")
+    public List<WishListItemDto> getWishlist(@AuthenticationPrincipal User user) {
 
         List<Wishlist> wishlists = wishlistRepository.findByUser_Id(user.getId()).orElse(new ArrayList<>());
 
