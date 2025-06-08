@@ -1,6 +1,7 @@
 package com._Abdelaziz26.Game.Exceptions;
 
 import com._Abdelaziz26.Game.Responses.ApiResponse;
+import com.stripe.exception.StripeException;
 import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,6 +60,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleAuthenticationServiceException(AuthenticationServiceException ex){
         ApiResponse<Void> res = logErrorAndCreateFailureResponse(ex);
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(res);
+    }
+
+    @ExceptionHandler(StripeException.class)
+    public ResponseEntity<ApiResponse<Void>> handleStripeException(StripeException ex){
+        ApiResponse<Void> res = logErrorAndCreateFailureResponse(ex);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
     }
 
     @ExceptionHandler(Exception.class)
