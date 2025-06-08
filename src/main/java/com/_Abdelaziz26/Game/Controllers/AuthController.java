@@ -1,9 +1,6 @@
 package com._Abdelaziz26.Game.Controllers;
 
-import com._Abdelaziz26.Game.DTOs.Auth.ConfirmEmailDto;
-import com._Abdelaziz26.Game.DTOs.Auth.LoginDto;
-import com._Abdelaziz26.Game.DTOs.Auth.RegisterDto;
-import com._Abdelaziz26.Game.DTOs.Auth.ResetPasswordDto;
+import com._Abdelaziz26.Game.DTOs.Auth.*;
 import com._Abdelaziz26.Game.Exceptions.CodeNotValidException;
 import com._Abdelaziz26.Game.Exceptions.PasswordsNotMatchedException;
 import com._Abdelaziz26.Game.Responses.ApiResponse;
@@ -104,5 +101,11 @@ public class AuthController {
 
     }
 
+    @PostMapping("/assign-role")
+    public ResponseEntity<ApiResponse<Void>> AssignUserRole(@RequestBody UserRoleDto userRole){
+
+        authService.assignUserToRole(userRole.getUserId(), userRole.getRole());
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true, "Assigned Successfully"));
+    }
 
 }

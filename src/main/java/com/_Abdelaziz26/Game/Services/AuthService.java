@@ -14,6 +14,7 @@ import com._Abdelaziz26.Game.Responses.AuthResponse;
 import com._Abdelaziz26.Game.Responses.TokenResponse;
 import com._Abdelaziz26.Game.Utility.JwtService;
 import com._Abdelaziz26.Game.Utility.MailService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -222,5 +223,20 @@ public class AuthService {
         }
 
         return null;
+    }
+
+    public void assignUserToRole(Long email, String role)
+    {
+        User user = userRepository.findById(email).orElseThrow(() ->
+                new EntityNotFoundException("No such user found"));
+
+        Role r = roleRepository.findByName("ROLE_" + role.toUpperCase()).orElseThrow(() ->
+                new EntityNotFoundException("No such role found"));
+
+        user.getRoles().add(r);
+        r.getUsers().add(user);
+
+        userRepository.save(user);
+
     }
 }

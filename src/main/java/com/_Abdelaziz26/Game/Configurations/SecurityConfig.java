@@ -57,8 +57,13 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
-                                "/swagger-ui.html"
+                                "/swagger-ui.html",
+                                "/api/game/get-all"
                         ).permitAll()
+                        .requestMatchers("/api/game/add",
+                                "/api/game/update/",
+                                "/api/game/delete/"
+                        ).hasRole("ADMIN")
                         .anyRequest().authenticated()
 
                 )
