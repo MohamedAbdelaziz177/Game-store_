@@ -24,7 +24,7 @@ public class GameController {
 
     private final GameService gameService;
 
-    @GetMapping("/{id}")
+    @GetMapping("/get-by-id/{id}")
     public ResponseEntity<ApiResponse<ReadGameDto>> getGameById(@PathVariable Long id) {
 
         ApiResponse<ReadGameDto> res = new ApiResponse<>();
@@ -36,7 +36,7 @@ public class GameController {
         return ResponseEntity.ok(res);
     }
 
-    @GetMapping("/")
+    @GetMapping("/get-all")
     public ResponseEntity<ApiResponse<List<GameCardDto>>> getAllGames (
                                          @RequestParam(defaultValue = "0") int pageIdx,
                                          @RequestParam(defaultValue = "8") int pageSize,
@@ -76,7 +76,7 @@ public class GameController {
 
     }
 
-    @PostMapping("/")
+    @PostMapping("/add")
     public ResponseEntity<ApiResponse<ReadGameDto>> addGame(@ModelAttribute CreateGameDto game) {
 
         ApiResponse<ReadGameDto> res = new ApiResponse<>();
@@ -88,14 +88,14 @@ public class GameController {
         return ResponseEntity.status(HttpStatus.CREATED).body(res);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteGame(@PathVariable Long id) {
 
         gameService.deleteGame(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<ApiResponse<ReadGameDto>> updateGame(@PathVariable Long id, UpdateGameDto updateGameDto) {
 
         ApiResponse<ReadGameDto> res = new ApiResponse<>();
