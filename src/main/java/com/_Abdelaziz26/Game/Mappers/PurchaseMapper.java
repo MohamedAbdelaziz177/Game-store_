@@ -39,7 +39,7 @@ public class PurchaseMapper {
                 .status(purchase.getStatus())
                 .game(new GameCardDto(purchase.getGame().getId(),
                         purchase.getGame().getName(),
-                        purchase.getGame().getImageUrl()))
+                        purchase.getGame().getImageUrl(), purchase.getGame().getPrice()))
                 .build();
 
     }
