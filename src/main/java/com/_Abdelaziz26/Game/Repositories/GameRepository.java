@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 public interface GameRepository extends JpaRepository<Game, Long>, JpaSpecificationExecutor<Game> {
 
     Page<Game> findByName(String name, Pageable pageable);
@@ -15,16 +17,17 @@ public interface GameRepository extends JpaRepository<Game, Long>, JpaSpecificat
 
     Page<Game> findByGenre_Id(Long genreId, Pageable pageable);
 
-
-    @Query("SELECT g FROM Game g WHERE g.genre.name = :name ORDER BY g.id DESC")
-    Page<Game> findByGenre_Name(@Param("name") String genreName, Pageable pageable);
-
-    // Searching and filtering
-    Page<Game> findByGenre_IdAndNameContainingIgnoreCase(Long genreId, String name, Pageable pageable);
-
-    Page<Game> findByNameAndGenre_IdOrderByPriceAsc(String name, Long genreId, Pageable pageable);
-
-    Page<Game> findByNameAndGenre_IdOrderByPriceDesc(String name, Long genreId, Pageable pageable);
+    @Query("""
+     select distinct g from Game g 
+     join g.platforms p
+     where (:genre is null OR g.genre.name = :genre)
+      AND (:platform is null OR :platform = p.name)
+      AND (:gameName is null OR g.name LIKE %:gameName%)
+     """)
+    Page<Game> filterByGenreAndPlatforms(@Param("genre") String genre,
+                                         @Param("platform") String platform,
+                                         @Param("gameName") String gameName,
+                                         Pageable pageable);
 
 
 }
