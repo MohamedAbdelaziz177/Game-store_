@@ -6,7 +6,12 @@ import com._Abdelaziz26.Game.Repositories.GameRepository;
 import com._Abdelaziz26.Game.Repositories.PlatformRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +24,14 @@ public class PlatformService {
         return platformRepository.existsById(platformId);
     }
 
+
+    @Cacheable(value = "AllPlatforms")
+    public List<String> getAllPlatforms() {
+        List<Platform> platforms = platformRepository.findAll();
+        return platforms.stream().map(Platform::getName).toList();
+    }
+
+    @CacheEvict(value = "AllPlatforms", allEntries = true)
     public void addPlatform(String platform) {
 
         Platform platform1 = new Platform();
@@ -28,6 +41,7 @@ public class PlatformService {
         platformRepository.save(platform1);
     }
 
+    @CacheEvict(value = "AllPlatforms", allEntries = true)
     public void deletePlatform(Long platformId) {
 
         Platform platform = platformRepository.findById(platformId).orElseThrow(() ->
@@ -47,6 +61,8 @@ public class PlatformService {
         game.getPlatforms().add(platform);
         platform.getGames().add(game);
 
+        gameRepository.save(game);
+
     }
 
     public void deleteGameFromPlatform(Long gameId, Long platformId) {
@@ -59,5 +75,7 @@ public class PlatformService {
 
         game.getPlatforms().remove(platform);
         platform.getGames().remove(game);
+
+        gameRepository.save(game);
     }
 }

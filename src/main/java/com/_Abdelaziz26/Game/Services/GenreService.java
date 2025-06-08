@@ -3,6 +3,9 @@ package com._Abdelaziz26.Game.Services;
 import com._Abdelaziz26.Game.Model.Genre;
 import com._Abdelaziz26.Game.Repositories.GenreRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,6 +16,7 @@ public class GenreService {
 
     private final GenreRepository genreRepository;
 
+    @CacheEvict(value = "AllGenres", allEntries = true)
     public void addGenre(String genre) {
 
         Genre newGenre = new Genre();
@@ -20,6 +24,7 @@ public class GenreService {
         genreRepository.save(newGenre);
     }
 
+    @CacheEvict(value = "AllGenres", allEntries = true)
     public void removeGenre(String genre) {
 
         Genre genreToRemove = genreRepository.findByName(genre).orElseThrow(() ->
@@ -28,6 +33,7 @@ public class GenreService {
         genreRepository.delete(genreToRemove);
     }
 
+    @Cacheable(value = "AllGenres")
     public List<String> getAllGenres() {
 
         List<Genre> genres = genreRepository.findAll();
