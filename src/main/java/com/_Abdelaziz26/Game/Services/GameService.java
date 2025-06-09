@@ -103,16 +103,16 @@ public class GameService {
                                     int pageSize,
                                     String sortField,
                                     String sortDirection,
-                                    Specification<Game> filter
+                                    String genre, String platform, String search
     ){
 
         Pageable pageable = getPageAndSorting(pageIndex, pageSize, sortField, sortDirection);
 
-        if (filter == null)
+        if (genre == null && platform == null && search == null)
             return getAllGames(pageIndex, pageSize, sortField, sortDirection);
 
 
-        Page<Game> games = gameRepository.findAll(filter, pageable);
+        Page<Game> games = gameRepository.filterByGenreAndPlatforms(genre, platform, search, pageable);
 
         return games.stream().map(game -> mapper.toDto(game, true)).toList();
     }

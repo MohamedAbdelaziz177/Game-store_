@@ -40,12 +40,10 @@ public class GameController {
     public ResponseEntity<ApiResponse<List<GameCardDto>>> getAllGames (
                                          @RequestParam(defaultValue = "0") int pageIdx,
                                          @RequestParam(defaultValue = "8") int pageSize,
-                                         @RequestParam(required = false) String sortField,
+                                         @RequestParam(required = false, defaultValue = "price") String sortField,
                                          @RequestParam(required = false, defaultValue = "asc") String sortDirection,
                                          @RequestParam(required = false) String genre,
-                                         @RequestParam(required = false) String genreValue,
                                          @RequestParam(required = false) String platform,
-                                         @RequestParam(required = false) String platformValue,
                                          @RequestParam(required = false) String search
     ) {
 
@@ -64,10 +62,7 @@ public class GameController {
 
         ApiResponse<List<GameCardDto>> res = new ApiResponse<>();
 
-        if(sortField != null)
-        res.setData(gameService.getAllGames(pageIdx, pageSize, sortField, sortDirection));
-
-        else res.setData(gameService.getAllGames(pageIdx, pageSize));
+        res.setData(gameService.filterGames(pageIdx, pageSize, sortField, sortDirection, genre, platform, search));
 
         res.setSuccess(true);
         res.setMessage("Games retrieved successfully");
