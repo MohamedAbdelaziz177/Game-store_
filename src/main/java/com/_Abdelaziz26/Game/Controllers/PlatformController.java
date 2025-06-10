@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/platform")
 @RequiredArgsConstructor
@@ -20,9 +22,9 @@ public class PlatformController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<String> addPlatform(@RequestBody String platform) {
+    public ResponseEntity<String> addPlatform(@RequestBody Map<String, String> map) {
 
-        platformService.addPlatform(platform);
+        platformService.addPlatform(map.get("platform"));
         return ResponseEntity.ok("Platform added successfully");
     }
 

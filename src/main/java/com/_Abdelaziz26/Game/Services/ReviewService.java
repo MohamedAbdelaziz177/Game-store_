@@ -16,6 +16,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -39,8 +40,10 @@ public class ReviewService {
         Game game = gameRepository.findById(gameId).orElseThrow(() ->
                 new EntityNotFoundException("Game not found"));
 
+        List<Review> reviews = reviewRepository.findByGame_Id(game.getId()).orElse(new ArrayList<>());
+
         return
-                reviewRepository.findByGame_Id(gameId).stream().map(reviewMapper::toDto).toList();
+                reviews.stream().map(reviewMapper::toDto).toList();
     }
 
     public List<ReadReviewDto> getAllUserReviews(Long userId) {
@@ -48,7 +51,9 @@ public class ReviewService {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new EntityNotFoundException("User not found"));
 
-        return reviewRepository.findByUser_Id(user.getId()).stream().map(reviewMapper::toDto).toList();
+        List<Review> reviews = reviewRepository.findByUser_Id(user.getId()).orElse(new ArrayList<>());
+
+        return reviews.stream().map(reviewMapper::toDto).toList();
 
         // try -  return user.getReviews().stream().map(reviewMapper::toDto).toList();
     }
@@ -56,6 +61,14 @@ public class ReviewService {
     public ReadReviewDto updateReview(@AuthenticationPrincipal User user,
                                       UpdateReviewDto updateReviewDto,
                                       Long reviewId) {
+
+        Review review = reviewRepository.findById(reviewId).orElseThrow(() ->
+                new EntityNotFoundException("Review not found"));
+
+        if (!Objects.equals(review.getUser().getId(), user.getId())) {
+            throw new AccessDeniedException("You are not authorized to delete this review");
+        }
+
         return reviewMapper.toDto(reviewRepository.save(reviewMapper.toDto(updateReviewDto, reviewId)));
     }
 

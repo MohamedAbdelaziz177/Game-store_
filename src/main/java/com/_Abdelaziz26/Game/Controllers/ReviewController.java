@@ -29,14 +29,14 @@ public class ReviewController {
         return ResponseEntity.ok(new ApiResponse<>(true, reviewDto));
     }
 
-    @GetMapping("/{gameId}")
+    @GetMapping("/gameId/{gameId}")
     public ResponseEntity<ApiResponse<List<ReadReviewDto>>> getAllGameReviews(@PathVariable Long gameId) {
 
         List<ReadReviewDto> reviews = reviewService.getAllGameReviews(gameId);
         return ResponseEntity.ok(new ApiResponse<>(true, reviews));
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping("/userId/{userId}")
     public ResponseEntity<ApiResponse<List<ReadReviewDto>>> getAllUserReviews(@PathVariable Long userId) {
 
         List<ReadReviewDto> reviews = reviewService.getAllUserReviews(userId);
@@ -51,6 +51,10 @@ public class ReviewController {
         ReadReviewDto reviewDto = reviewService.updateReview(user, updateReviewDto, reviewId);
         return ResponseEntity.ok(new ApiResponse<>(true, reviewDto));
     }
-
+    @DeleteMapping("/{reviewId}")
+    public ResponseEntity<ApiResponse<Void>> deleteReview(@PathVariable Long reviewId, @AuthenticationPrincipal User user) {
+        reviewService.deleteReview(reviewId, user);
+        return ResponseEntity.ok(new ApiResponse<>(true, null));
+    }
 
 }

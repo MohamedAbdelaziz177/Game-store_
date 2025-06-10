@@ -76,18 +76,18 @@ public class GameService {
 
 
 
-    @Cacheable(value = "ALL_GAMES_CACHE")
+    //@Cacheable(value = "ALL_GAMES_CACHE")
     public List<GameCardDto> getAllGames(int pageIndex, int pageSize, String sortField, String sortDirection)
     {
         Pageable pageable = getPageAndSorting(pageIndex, pageSize, sortField, sortDirection);
 
-        List<Game> games = gameRepository.findAll();
+        Page<Game> games = gameRepository.findAll(pageable);
 
         return games.stream().map(game -> mapper.toDto(game, true)).toList();
 
     }
 
-    @Cacheable(value = "ALL_GAMES_CACHE")
+    //@Cacheable(value = "ALL_GAMES_CACHE")
     public List<GameCardDto> getAllGames(int pageIndex, int pageSize)
     {
         Pageable pageable = PageRequest.of(pageIndex, pageSize);
@@ -98,13 +98,17 @@ public class GameService {
     }
 
 
-    @Cacheable(value = "ALL_GAMES_CACHE")
+    //@Cacheable(value = "ALL_GAMES_CACHE")
     public List<GameCardDto> filterGames( int pageIndex,
                                     int pageSize,
                                     String sortField,
                                     String sortDirection,
                                     String genre, String platform, String search
     ){
+
+        if (genre != null && genre.isBlank()) genre = null;
+        if (platform != null && platform.isBlank()) platform = null;
+        if (search != null && search.isBlank()) search = null;
 
         Pageable pageable = getPageAndSorting(pageIndex, pageSize, sortField, sortDirection);
 
