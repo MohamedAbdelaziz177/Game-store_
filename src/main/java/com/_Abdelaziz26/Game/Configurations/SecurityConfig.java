@@ -64,6 +64,7 @@ public class SecurityConfig {
                                 "/api/game/update/",
                                 "/api/game/delete/"
                         ).hasRole("ADMIN")
+                        .requestMatchers("/api/purchase/success", "/api/purchase/cancel").permitAll()
                         .anyRequest().authenticated()
 
                 )

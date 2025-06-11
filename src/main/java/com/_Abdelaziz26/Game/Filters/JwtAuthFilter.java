@@ -30,7 +30,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
 
 
-        if(request.getRequestURI().equalsIgnoreCase("/api/auth/**"))
+        if(request.getRequestURI().equalsIgnoreCase("/api/auth/**") ||
+                request.getRequestURI().equalsIgnoreCase("/api/purchase/success") ||
+                request.getRequestURI().equalsIgnoreCase("/api/purchase/cancel")
+        )
         {
             filterChain.doFilter(request, response);
             return;
