@@ -14,17 +14,13 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class StripeService {
 
-    @Value("${stripe.success.url}")
-    private static String SUCCESS_URL;
 
-    @Value("${stripe.cancel.url}")
-    private static String ERROR_URL;
 
     public StripeResponse createStripeSession(PurchaseDto purchaseDto) throws StripeException
     {
         SessionCreateParams params = SessionCreateParams.builder()
-                .setSuccessUrl(SUCCESS_URL)
-                .setCancelUrl(ERROR_URL)
+                .setSuccessUrl("http://localhost:8080/api/purchase/success")
+                .setCancelUrl("http://localhost:8080/api/purchase/cancel")
                 .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
                 .setMode(SessionCreateParams.Mode.PAYMENT)
                 .addLineItem(
