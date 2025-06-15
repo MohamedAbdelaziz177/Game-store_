@@ -76,7 +76,7 @@ public class GameService {
 
 
 
-    //@Cacheable(value = "ALL_GAMES_CACHE")
+    @Cacheable(value = "ALL_GAMES_CACHE", key = "{#pageIndex, #pageSize, #sortField, #sortDirection}")
     public List<GameCardDto> getAllGames(int pageIndex, int pageSize, String sortField, String sortDirection)
     {
         Pageable pageable = getPageAndSorting(pageIndex, pageSize, sortField, sortDirection);
@@ -87,7 +87,7 @@ public class GameService {
 
     }
 
-    //@Cacheable(value = "ALL_GAMES_CACHE")
+    @Cacheable(value = "ALL_GAMES_CACHE", key = "{#pageIndex, #pageSize}")
     public List<GameCardDto> getAllGames(int pageIndex, int pageSize)
     {
         Pageable pageable = PageRequest.of(pageIndex, pageSize);
@@ -98,7 +98,7 @@ public class GameService {
     }
 
 
-    //@Cacheable(value = "ALL_GAMES_CACHE")
+    @Cacheable(value = "ALL_GAMES_CACHE", key = "{#pageIndex, #pageSize, #sortField, #sortDirection, #genre, #platform, #search}")
     public List<GameCardDto> filterGames( int pageIndex,
                                     int pageSize,
                                     String sortField,
