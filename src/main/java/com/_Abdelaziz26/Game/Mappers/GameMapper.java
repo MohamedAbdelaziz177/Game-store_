@@ -71,7 +71,6 @@ public class GameMapper {
 
         readGameDto.setImageUrl(game.getImageUrl());
 
-
         return  readGameDto;
     }
 

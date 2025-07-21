@@ -131,11 +131,7 @@
 			<version>0.12.6</version>
 			<scope>runtime</scope>
 		</dependency>
-        <dependency>
-            <groupId>com._Abdelaziz26</groupId>
-            <artifactId>Game</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
+
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
