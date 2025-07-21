@@ -73,7 +73,7 @@ public class PurchaseService {
 
     public List<AdminPurchaseDto> getAdminPurchases(@AuthenticationPrincipal User user)
     {
-        List<Purchase> purchases = purchaseRepository.findAllOrderByCreatedAtDesc().orElse(new ArrayList<>());
+        List<Purchase> purchases = purchaseRepository.findAllByOrderByCreatedAtDesc().orElse(new ArrayList<>());
 
         return purchases.stream().map(purchaseMapper::toAdminDto).toList();
     }

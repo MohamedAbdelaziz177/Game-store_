@@ -10,5 +10,5 @@ public interface PurchaseRepository extends JpaRepository<Purchase, Long> {
 
     Optional<List<Purchase>> findByUser_Id(Long userId);
 
-    Optional<List<Purchase>> findAllOrderByCreatedAtDesc();
+    Optional<List<Purchase>> findAllByOrderByCreatedAtDesc();
 }
