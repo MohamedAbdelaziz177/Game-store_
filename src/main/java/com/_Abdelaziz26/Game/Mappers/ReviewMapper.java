@@ -38,14 +38,13 @@ public class ReviewMapper {
                 .build();
     }
 
-    public Review toDto(UpdateReviewDto updateReviewDto, Long id) {
+    public Review fromDto(UpdateReviewDto updateReviewDto, Long id) {
 
         Review review = reviewRepository.findById(id).orElseThrow(() ->
                 new EntityNotFoundException("Review not found"));
 
         review.setComment(updateReviewDto.getContent());
         review.setRating(updateReviewDto.getRating());
-
 
         return review;
     }

@@ -69,7 +69,7 @@ public class ReviewService {
             throw new AccessDeniedException("You are not authorized to delete this review");
         }
 
-        return reviewMapper.toDto(reviewRepository.save(reviewMapper.toDto(updateReviewDto, reviewId)));
+        return reviewMapper.toDto(reviewRepository.save(reviewMapper.fromDto(updateReviewDto, reviewId)));
     }
 
     public void deleteReview(Long reviewId, @AuthenticationPrincipal User user) {
