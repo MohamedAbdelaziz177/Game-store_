@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    username: admin
+    password: 1234
+    url: jdbc:postgresql://localhost:5432/games
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
