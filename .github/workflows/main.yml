@@ -12,6 +12,8 @@ env:
   JWT_SECRET: ${{ secrets.JWT_SECRET }}
   STRIPE_SECRET: ${{ secrets.STRIPE_SECRET }}
   STORAGE_DIR: ${{ secrets.STORAGE_DIR }}
+  MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+  MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
 
 jobs:
   build:
