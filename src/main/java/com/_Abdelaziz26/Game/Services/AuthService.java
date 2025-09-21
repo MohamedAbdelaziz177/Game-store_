@@ -47,7 +47,7 @@ public class AuthService {
 
     private final static Logger logger = LoggerFactory.getLogger(AuthService.class);
 
-    @Value("${app.env}")
+    @Value("${SPRING_ENV}")
     private String APP_ENV;
 
 

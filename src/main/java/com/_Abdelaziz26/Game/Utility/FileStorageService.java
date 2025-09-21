@@ -16,7 +16,7 @@ import java.util.Objects;
 
 public class FileStorageService {
 
-    @Value("${storage.dir}")
+    @Value("${STORAGE_DIR}")
     private String PARENT_DIR;
 
     public String SaveImgAndGetUrl(MultipartFile file) throws IOException {

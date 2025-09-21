@@ -78,7 +78,4 @@ public class PurchaseService {
         return purchases.stream().map(purchaseMapper::toAdminDto).toList();
     }
 
-
-
-
 }

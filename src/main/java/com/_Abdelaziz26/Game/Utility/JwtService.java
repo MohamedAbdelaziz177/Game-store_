@@ -31,10 +31,10 @@ public class JwtService {
     final private UserRepository userRepository;
     final private RefreshTokenRepository refreshTokenRepository;
 
-    @Value("${app.env}")
+    @Value("${SPRING_ENV}")
     private String APP_ENV;
 
-    @Value("${jwt.secret}")
+    @Value("${JWT_SECRET}")
     private String secret;
 
     public TokenResponse refreshToken(String tok) {
