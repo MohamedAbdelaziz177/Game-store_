@@ -7,6 +7,12 @@ on:
     branches:
       - master
 
+env:
+  SPRING_ENV: ${{ secrets.SPRING_ENV }}
+  JWT_SECRET: ${{ secrets.JWT_SECRET }}
+  STRIPE_SECRET: ${{ secrets.STRIPE_SECRET }}
+  STORAGE_DIR: ${{ secrets.STORAGE_DIR }}
+
 jobs:
   build:
     name: Build
