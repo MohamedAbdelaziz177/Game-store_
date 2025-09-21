@@ -12,6 +12,8 @@ env:
   JWT_SECRET: ${{ secrets.JWT_SECRET }}
   STRIPE_SECRET: ${{ secrets.STRIPE_SECRET }}
   STORAGE_DIR: ${{ secrets.STORAGE_DIR }}
+  MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+  MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
 
 jobs:
   build:
@@ -51,15 +53,15 @@ jobs:
       - name: login to DockerHub
         uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
+          username: mohamecabdelaziz66
           password: ${{ secrets.DOCKER_PASSWORD }}
 
 
       - name: build Docker Image
-        run: docker build . --file Dockerfile --tag ${{ secrets.DOCKERHUB_USERNAME }}/game:latest
+        run: docker build . --file Dockerfile --tag mohamecabdelaziz66/game:latest
 
       - name: push Docker Image
-        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/game:latest
+        run: docker push mohamecabdelaziz66/game:latest
 
     needs:
       - build
