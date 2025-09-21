@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: docker
+    active: qa
 
   application:
     name: Game
