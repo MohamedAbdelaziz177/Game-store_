@@ -36,7 +36,7 @@ public class WishlistController {
     public ResponseEntity<ApiResponse<List<WishListItemDto>>> getWishlist(@AuthenticationPrincipal User user){
 
         return ResponseEntity
-                .ok(new ApiResponse<List<WishListItemDto>>(true, wishlistService.getWishlist(user)));
+                .ok(new ApiResponse<>(true, wishlistService.getWishlist(user)));
     }
 
 }

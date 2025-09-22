@@ -7,6 +7,7 @@ import com._Abdelaziz26.Game.DTOs.Game.UpdateGameDto;
 import com._Abdelaziz26.Game.Mappers.GameMapper;
 import com._Abdelaziz26.Game.Model.Game;
 import com._Abdelaziz26.Game.Repositories.GameRepository;
+import com._Abdelaziz26.Game.Utility.GameSpecifications;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
@@ -20,7 +21,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -87,36 +91,31 @@ public class GameService {
 
     }
 
-    @Cacheable(value = "ALL_GAMES_CACHE", key = "{#pageIndex, #pageSize}")
-    public List<GameCardDto> getAllGames(int pageIndex, int pageSize)
-    {
-        Pageable pageable = PageRequest.of(pageIndex, pageSize);
-
-        Page<Game> games = gameRepository.findAll(pageable);
-
-        return games.stream().map(game -> mapper.toDto(game, true)).toList();
-    }
-
 
     @Cacheable(value = "ALL_GAMES_CACHE", key = "{#pageIndex, #pageSize, #sortField, #sortDirection, #genre, #platform, #search}")
     public List<GameCardDto> filterGames( int pageIndex,
                                     int pageSize,
                                     String sortField,
                                     String sortDirection,
-                                    String genre, String platform, String search
+                                    Optional<String> genre,
+                                    Optional<String> platform,
+                                    Optional<String> search,
+                                    Optional<Double> minPrice,
+                                    Optional<Double> maxPrice
     ){
 
-        if (genre != null && genre.isBlank()) genre = null;
-        if (platform != null && platform.isBlank()) platform = null;
-        if (search != null && search.isBlank()) search = null;
+        Map<String, Object> filters = new HashMap<>();
+
+        if (search.isPresent()) filters.put("search", search);
+        if (genre.isPresent())   filters.put("genre", genre);
+        if (platform.isPresent()) filters.put("platform", platform);
+        if (minPrice.isPresent()) filters.put("minPrice", minPrice);
+        if (maxPrice.isPresent()) filters.put("maxPrice", maxPrice);
 
         Pageable pageable = getPageAndSorting(pageIndex, pageSize, sortField, sortDirection);
+        Specification<Game> specs = GameSpecifications.getSpecifications(filters);
 
-        if (genre == null && platform == null && search == null)
-            return getAllGames(pageIndex, pageSize, sortField, sortDirection);
-
-
-        Page<Game> games = gameRepository.filterByGenreAndPlatforms(genre, platform, search, pageable);
+        Page<Game> games = gameRepository.filterByGenreAndPlatforms(specs, pageable);
 
         return games.stream().map(game -> mapper.toDto(game, true)).toList();
     }

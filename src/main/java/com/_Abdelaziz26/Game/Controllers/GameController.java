@@ -9,13 +9,18 @@ import com._Abdelaziz26.Game.Responses.ApiResponse;
 import com._Abdelaziz26.Game.Services.GameService;
 import com._Abdelaziz26.Game.Utility.GameSpecifications;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.sql.model.internal.OptionalTableUpdate;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.swing.text.html.Option;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/game")
@@ -39,30 +44,31 @@ public class GameController {
     @GetMapping("/get-all")
     public ResponseEntity<ApiResponse<List<GameCardDto>>> getAllGames (
                                          @RequestParam(defaultValue = "0") int pageIdx,
-                                         @RequestParam(defaultValue = "8") int pageSize,
+                                         @RequestParam(defaultValue = "3") int pageSize,
                                          @RequestParam(required = false, defaultValue = "price") String sortField,
                                          @RequestParam(required = false, defaultValue = "asc") String sortDirection,
-                                         @RequestParam(required = false) String genre,
-                                         @RequestParam(required = false) String platform,
-                                         @RequestParam(required = false) String search
+                                         @RequestParam Optional<String> genre,
+                                         @RequestParam Optional<String> platform,
+                                         @RequestParam Optional<String> search,
+                                         @RequestParam Optional<Double> minPrice,
+                                         @RequestParam Optional<Double> maxPrice
     ) {
-
-        //Specification<Game> spec = Specification.where(null);
-        //
-        //if(genre != null)
-        //    spec = spec.and(GameSpecifications.hasField(genre, genreValue));
-        //
-        //
-        //if(platform != null)
-        //    spec = spec.and(GameSpecifications.hasField(platform, platformValue));
-        //
-        //if(search != null)
-        //    spec = spec.and(GameSpecifications.hasFieldLike(search, search));
-
 
         ApiResponse<List<GameCardDto>> res = new ApiResponse<>();
 
-        res.setData(gameService.filterGames(pageIdx, pageSize, sortField, sortDirection, genre, platform, search));
+        res.setData(
+                gameService.filterGames(
+                pageIdx,
+                pageSize,
+                sortField,
+                sortDirection,
+                genre,
+                platform,
+                search,
+                minPrice,
+                maxPrice
+                )
+        );
 
         res.setSuccess(true);
         res.setMessage("Games retrieved successfully");
