@@ -11,6 +11,9 @@ import com._Abdelaziz26.Game.Model.User;
 import com._Abdelaziz26.Game.Repositories.GameRepository;
 import com._Abdelaziz26.Game.Repositories.PurchaseRepository;
 import com._Abdelaziz26.Game.Repositories.UserRepository;
+import com._Abdelaziz26.Game.Responses.Result_.Error;
+import com._Abdelaziz26.Game.Responses.Result_.Errors;
+import com._Abdelaziz26.Game.Responses.Result_.Result;
 import com._Abdelaziz26.Game.Responses.StripeResponse;
 import com._Abdelaziz26.Game.Utility.StripeService;
 import com.stripe.exception.StripeException;
@@ -21,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -32,50 +36,57 @@ public class PurchaseService {
     private final PurchaseRepository purchaseRepository;
     private final PurchaseMapper purchaseMapper;
 
-    public PurchaseDto checkout(Long id, @AuthenticationPrincipal User user) {
+    public Result<PurchaseDto, Error> checkout(Long id, @AuthenticationPrincipal User user) {
 
-        Game game = gameRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Game not found"));
+        Optional<Game> game = gameRepository.findById(id);
+
+        if(game.isEmpty())
+            return Result.CreateErrorResult(Errors.NotFoundErr("Game not found"));
 
         PurchaseDto purchaseDto = new PurchaseDto();
 
-        purchaseDto.setGameName(game.getName());
-        purchaseDto.setPrice(game.getPrice());
+        purchaseDto.setGameName(game.get().getName());
+        purchaseDto.setPrice(game.get().getPrice());
         purchaseDto.setId(id);
 
-        return purchaseDto;
+        return Result.CreateSuccessResult(purchaseDto);
     }
 
-    public StripeResponse purchase(PurchaseDto purchaseDto, @AuthenticationPrincipal User user) throws StripeException
+    public Result<StripeResponse, Error> purchase(Long gameId, @AuthenticationPrincipal User user) throws StripeException
     {
-        Game game = gameRepository.findById(purchaseDto.getId()).orElseThrow(() ->
-                new EntityNotFoundException("Game not found"));
+        Optional<Game> game = gameRepository.findById(gameId);
+
+        if(game.isEmpty())
+            return Result.CreateErrorResult(Errors.NotFoundErr("Game not found"));
 
         Purchase purchase = new Purchase();
-        purchase.setGame(game);
+        purchase.setGame(game.get());
         purchase.setUser(user);
-        purchase.setAmount(purchaseDto.getPrice());
+        purchase.setAmount(game.get().getPrice());
         purchase.setStatus(PurchaseStatus.PENDING);
         user.getPurchases().add(purchase);
 
         purchaseRepository.save(purchase);
         userRepository.save(user);
 
-
-        return stripeService.createStripeSession(purchaseDto);
+        return Result
+                .CreateSuccessResult(stripeService
+                        .createStripeSession(new PurchaseDto(gameId, game.get().getName(), game.get().getPrice()
+                        )
+                        )
+                );
     }
 
-    public List<ReadPurchaseDto> getMyPurchases(@AuthenticationPrincipal User user) {
+    public Result<List<ReadPurchaseDto>, Error> getMyPurchases(@AuthenticationPrincipal User user) {
 
         List<Purchase> purchases = purchaseRepository.findByUser_Id(user.getId()).orElse(new ArrayList<>());
-
-        return purchases.stream().map(purchaseMapper::toDto).toList();
+        return Result.CreateSuccessResult(purchases.stream().map(purchaseMapper::toDto).toList());
     }
 
-    public List<AdminPurchaseDto> getAdminPurchases(@AuthenticationPrincipal User user)
+    public Result<List<AdminPurchaseDto>, Error> getAdminPurchases()
     {
         List<Purchase> purchases = purchaseRepository.findAllByOrderByCreatedAtDesc().orElse(new ArrayList<>());
-
-        return purchases.stream().map(purchaseMapper::toAdminDto).toList();
+        return Result.CreateSuccessResult(purchases.stream().map(purchaseMapper::toAdminDto).toList());
     }
 
 }

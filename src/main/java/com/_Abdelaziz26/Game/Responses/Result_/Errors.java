@@ -56,6 +56,19 @@ public class Errors {
         };
     }
 
+    public static Error UnauthorizedErr(String msg){
+        return new Error() {
+            @Override
+            public ErrorType getType() {
+                return ErrorType.UNAUTHORIZED_ERR;
+            }
+            @Override
+            public String getMessage() {
+                return msg;
+            }
+        };
+    }
+
     public static Error None()
     {
         return new Error() {

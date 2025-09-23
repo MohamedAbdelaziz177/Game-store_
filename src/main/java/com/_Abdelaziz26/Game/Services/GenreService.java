@@ -2,6 +2,9 @@ package com._Abdelaziz26.Game.Services;
 
 import com._Abdelaziz26.Game.Model.Genre;
 import com._Abdelaziz26.Game.Repositories.GenreRepository;
+import com._Abdelaziz26.Game.Responses.Result_.Error;
+import com._Abdelaziz26.Game.Responses.Result_.Errors;
+import com._Abdelaziz26.Game.Responses.Result_.Result;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -9,6 +12,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -17,7 +21,7 @@ public class GenreService {
     private final GenreRepository genreRepository;
 
     @CacheEvict(value = "AllGenres", allEntries = true)
-    public void addGenre(String genre) {
+    public Result<Void, Error> addGenre(String genre) {
 
         Genre newGenre = new Genre();
         newGenre.setName(genre);
@@ -25,19 +29,23 @@ public class GenreService {
     }
 
     @CacheEvict(value = "AllGenres", allEntries = true)
-    public void removeGenre(String genre) {
+    public Result<String, Error> removeGenre(String genre) {
 
-        Genre genreToRemove = genreRepository.findByName(genre).orElseThrow(() ->
-                new RuntimeException("Genre not found"));
+        Optional<Genre> genreToRemove = genreRepository.findByName(genre);
 
-        genreRepository.delete(genreToRemove);
+        if(genreToRemove.isEmpty())
+            return Result.CreateErrorResult(Errors.NotFoundErr("Genre not found"));
+
+        genreRepository.delete(genreToRemove.get());
+
+        return Result.CreateSuccessResult("Genre removed successfully");
     }
 
     @Cacheable(value = "AllGenres")
-    public List<String> getAllGenres() {
+    public Result<List<String>, Error> getAllGenres() {
 
         List<Genre> genres = genreRepository.findAll();
 
-        return genres.stream().map(Genre::getName).toList();
+        return Result.CreateSuccessResult(genres.stream().map(Genre::getName).toList());
     }
 }

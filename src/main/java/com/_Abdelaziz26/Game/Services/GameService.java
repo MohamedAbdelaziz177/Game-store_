@@ -7,6 +7,9 @@ import com._Abdelaziz26.Game.DTOs.Game.UpdateGameDto;
 import com._Abdelaziz26.Game.Mappers.GameMapper;
 import com._Abdelaziz26.Game.Model.Game;
 import com._Abdelaziz26.Game.Repositories.GameRepository;
+import com._Abdelaziz26.Game.Responses.Result_.Error;
+import com._Abdelaziz26.Game.Responses.Result_.Errors;
+import com._Abdelaziz26.Game.Responses.Result_.Result;
 import com._Abdelaziz26.Game.Utility.GameSpecifications;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -59,41 +62,49 @@ public class GameService {
                     @CacheEvict(value = "ALL_GAMES_CACHE", allEntries = true)
             }
     )
-    public void deleteGame(Long id)
+    public Result<String, Error> deleteGame(Long id)
     {
-        Game game = gameRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("Game not found"));
+        Optional<Game> game = gameRepository.findById(id);
 
-        gameRepository.delete(game);
+        if(game.isEmpty())
+            return Result.CreateErrorResult(Errors.NotFoundErr("Game not found"));
+
+        gameRepository.delete(game.get());
+
+        return Result.CreateSuccessResult("Game deleted successfully");
     }
 
 
     @Cacheable(value = "GAME_CACHE", key = "#id")
-    public ReadGameDto getGameById(Long id)
+    public Result<ReadGameDto, Error> getGameById(Long id)
     {
-        Game game = gameRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("Game not found"));
+        Optional<Game> game = gameRepository.findById(id);
 
-        return mapper.toDto(game);
+        if(game.isEmpty())
+            return Result.CreateErrorResult(Errors.NotFoundErr("Game not found"));
+
+        return Result.CreateSuccessResult(mapper.toDto(game.get()));
     }
 
 
-
-
     @Cacheable(value = "ALL_GAMES_CACHE", key = "{#pageIndex, #pageSize, #sortField, #sortDirection}")
-    public List<GameCardDto> getAllGames(int pageIndex, int pageSize, String sortField, String sortDirection)
+    public Result<List<GameCardDto>, Error> getAllGames(int pageIndex, int pageSize, String sortField, String sortDirection)
     {
         Pageable pageable = getPageAndSorting(pageIndex, pageSize, sortField, sortDirection);
 
         Page<Game> games = gameRepository.findAll(pageable);
 
-        return games.stream().map(game -> mapper.toDto(game, true)).toList();
+        return Result
+                .CreateSuccessResult(games
+                .stream()
+                .map(game -> mapper.toDto(game, true))
+                .toList());
 
     }
 
 
     @Cacheable(value = "ALL_GAMES_CACHE", key = "{#pageIndex, #pageSize, #sortField, #sortDirection, #genre, #platform, #search}")
-    public List<GameCardDto> filterGames( int pageIndex,
+    public Result<List<GameCardDto>, Error> filterGames( int pageIndex,
                                     int pageSize,
                                     String sortField,
                                     String sortDirection,
@@ -117,7 +128,10 @@ public class GameService {
 
         Page<Game> games = gameRepository.filterByGenreAndPlatforms(specs, pageable);
 
-        return games.stream().map(game -> mapper.toDto(game, true)).toList();
+        return Result.CreateSuccessResult(games
+                .stream()
+                .map(game -> mapper.toDto(game, true))
+                .toList());
     }
 
 
