@@ -4,45 +4,32 @@ import com._Abdelaziz26.Game.DTOs.Game.CreateGameDto;
 import com._Abdelaziz26.Game.DTOs.Game.GameCardDto;
 import com._Abdelaziz26.Game.DTOs.Game.ReadGameDto;
 import com._Abdelaziz26.Game.DTOs.Game.UpdateGameDto;
-import com._Abdelaziz26.Game.Model.Game;
-import com._Abdelaziz26.Game.Responses.ApiResponse;
+import com._Abdelaziz26.Game.Responses.Result_.Error;
+import com._Abdelaziz26.Game.Responses.Result_.Result;
 import com._Abdelaziz26.Game.Services.GameService;
-import com._Abdelaziz26.Game.Utility.GameSpecifications;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.sql.model.internal.OptionalTableUpdate;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.text.html.Option;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/game")
 @RequiredArgsConstructor
-public class GameController {
+public class GameController extends _AbdelazizController {
 
     private final GameService gameService;
 
     @GetMapping("/get-by-id/{id}")
-    public ResponseEntity<ApiResponse<ReadGameDto>> getGameById(@PathVariable Long id) {
+    public ResponseEntity<Result<ReadGameDto, Error>> getGameById(@PathVariable Long id) {
 
-        ApiResponse<ReadGameDto> res = new ApiResponse<>();
-
-        res.setData(gameService.getGameById(id));
-        res.setSuccess(true);
-        res.setMessage("Games retrieved successfully");
-
-        return ResponseEntity.ok(res);
+        Result<ReadGameDto, Error> res = gameService.getGameById(id);
+        return ResponseEntity.status(resolveStatus(res)).body(res);
     }
 
     @GetMapping("/get-all")
-    public ResponseEntity<ApiResponse<List<GameCardDto>>> getAllGames (
+    public ResponseEntity<Result<List<GameCardDto>, Error>> getAllGames (
                                          @RequestParam(defaultValue = "0") int pageIdx,
                                          @RequestParam(defaultValue = "3") int pageSize,
                                          @RequestParam(required = false, defaultValue = "price") String sortField,
@@ -54,10 +41,7 @@ public class GameController {
                                          @RequestParam Optional<Double> maxPrice
     ) {
 
-        ApiResponse<List<GameCardDto>> res = new ApiResponse<>();
-
-        res.setData(
-                gameService.filterGames(
+        Result<List<GameCardDto>, Error> res = gameService.filterGames(
                 pageIdx,
                 pageSize,
                 sortField,
@@ -67,44 +51,27 @@ public class GameController {
                 search,
                 minPrice,
                 maxPrice
-                )
         );
 
-        res.setSuccess(true);
-        res.setMessage("Games retrieved successfully");
-
-        return ResponseEntity.ok(res);
-
+        return ResponseEntity.status(resolveStatus(res)).body(res);
     }
 
     @PostMapping("/add")
-    public ResponseEntity<ApiResponse<ReadGameDto>> addGame(@ModelAttribute CreateGameDto game) {
-
-        ApiResponse<ReadGameDto> res = new ApiResponse<>();
-
-        res.setData(gameService.addGame(game));
-        res.setSuccess(true);
-        res.setMessage("Game added successfully");
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(res);
+    public ResponseEntity<Result<ReadGameDto, Error>> addGame(@ModelAttribute CreateGameDto game) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(gameService.addGame(game));
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deleteGame(@PathVariable Long id) {
+    public ResponseEntity<Result<String, Error>> deleteGame(@PathVariable Long id) {
 
-        gameService.deleteGame(id);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        Result<String, Error> res = gameService.deleteGame(id);
+        return ResponseEntity.status(resolveStatus(res)).body(res);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<ApiResponse<ReadGameDto>> updateGame(@PathVariable Long id, UpdateGameDto updateGameDto) {
+    public ResponseEntity<Result<ReadGameDto, Error>> updateGame(@PathVariable Long id, UpdateGameDto updateGameDto) {
 
-        ApiResponse<ReadGameDto> res = new ApiResponse<>();
-
-        res.setData(gameService.updateGame(id, updateGameDto));
-        res.setSuccess(true);
-        res.setMessage("Game updated successfully");
-
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(res);
+        Result<ReadGameDto, Error> res = gameService.updateGame(id, updateGameDto);
+        return ResponseEntity.status(resolveStatus(res)).body(res);
     }
 }

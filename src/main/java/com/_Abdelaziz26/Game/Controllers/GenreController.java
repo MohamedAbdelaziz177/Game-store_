@@ -1,8 +1,10 @@
 package com._Abdelaziz26.Game.Controllers;
 
-import com._Abdelaziz26.Game.Responses.ApiResponse;
+import com._Abdelaziz26.Game.Responses.Result_.Error;
+import com._Abdelaziz26.Game.Responses.Result_.Result;
 import com._Abdelaziz26.Game.Services.GenreService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,47 +14,25 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/genre")
 @RequiredArgsConstructor
-public class GenreController {
+public class GenreController extends _AbdelazizController {
 
     private final GenreService genreService;
 
-    @PostMapping("/")
-    public ResponseEntity<ApiResponse<String>> addGenre(@RequestBody Map<String, String> map) {
-
-        ApiResponse<String> apiResponse = new ApiResponse<>();
-
+    @PostMapping
+    public ResponseEntity<Result<String, Error>> addGenre(@RequestBody Map<String, String> map) {
         genreService.addGenre(map.get("genre"));
-
-        apiResponse.setSuccess(Boolean.TRUE);
-        apiResponse.setMessage("Successfully added genre");
-
-        return ResponseEntity.ok(apiResponse);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @DeleteMapping("/")
-    public ResponseEntity<ApiResponse<String>> removeGenre(@RequestParam Map<String, String> map) {
+    @DeleteMapping
+    public ResponseEntity<Result<String, Error>> removeGenre(@RequestParam Map<String, String> map) {
 
-        ApiResponse<String> apiResponse = new ApiResponse<>();
-
-        genreService.removeGenre(map.get("genre"));
-
-        apiResponse.setMessage("Genre removed successfully");
-        apiResponse.setSuccess(Boolean.TRUE);
-
-        return ResponseEntity.ok(apiResponse);
+        Result<String, Error> res = genreService.removeGenre(map.get("genre"));
+        return ResponseEntity.status(resolveStatus(res)).body(res);
     }
 
     @GetMapping("/")
-    public ResponseEntity<ApiResponse<List<String>>> getAllGenres() {
-
-        ApiResponse<List<String>> apiResponse = new ApiResponse<>();
-
-        List<String> genres = genreService.getAllGenres();
-
-        apiResponse.setSuccess(Boolean.TRUE);
-        apiResponse.setMessage("Genres retrieved successfully");
-        apiResponse.setData(genres);
-
-        return ResponseEntity.ok(apiResponse);
+    public ResponseEntity<Result<List<String>, Error>> getAllGenres() {
+        return ResponseEntity.ok(genreService.getAllGenres());
     }
 }

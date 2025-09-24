@@ -40,9 +40,9 @@ public class GameService {
             evict = @CacheEvict(value = "ALL_GAMES_CACHE", allEntries = true),
             put = @CachePut(value = "GAME_CACHE", key = "#result.id")
     )
-    public ReadGameDto addGame(CreateGameDto dto)
+    public Result<ReadGameDto, Error> addGame(CreateGameDto dto)
     {
-        return mapper.toDto(gameRepository.save(mapper.fromDto(dto)));
+        return Result.CreateSuccessResult(mapper.toDto(gameRepository.save(mapper.fromDto(dto))));
     }
 
 
@@ -51,9 +51,9 @@ public class GameService {
             evict = @CacheEvict(value = "ALL_GAMES_CACHE", allEntries = true),
             put = @CachePut(value = "GAME_CACHE", key = "#id")
     )
-    public ReadGameDto updateGame(Long id, UpdateGameDto dto)
+    public Result<ReadGameDto, Error> updateGame(Long id, UpdateGameDto dto)
     {
-        return mapper.toDto(gameRepository.save(mapper.fromDto(id, dto)));
+        return Result.CreateSuccessResult(mapper.toDto(gameRepository.save(mapper.fromDto(id, dto))));
     }
 
     @Caching(

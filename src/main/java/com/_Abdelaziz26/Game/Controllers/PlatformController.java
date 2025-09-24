@@ -1,5 +1,7 @@
 package com._Abdelaziz26.Game.Controllers;
 
+import com._Abdelaziz26.Game.Responses.Result_.Error;
+import com._Abdelaziz26.Game.Responses.Result_.Result;
 import com._Abdelaziz26.Game.Services.PlatformService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +12,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/platform")
 @RequiredArgsConstructor
-public class PlatformController {
+public class PlatformController extends _AbdelazizController {
 
     private final PlatformService platformService;
 
@@ -22,29 +24,29 @@ public class PlatformController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<String> addPlatform(@RequestBody Map<String, String> map) {
-
-        platformService.addPlatform(map.get("platform"));
-        return ResponseEntity.ok("Platform added successfully");
+    public ResponseEntity<Result<String, Error>> addPlatform(@RequestBody Map<String, String> map) {
+        return ResponseEntity.ok(Result.CreateSuccessResult("Platform added successfully"));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deletePlatform(@PathVariable Long id) {
-        platformService.deletePlatform(id);
-        return ResponseEntity.ok("Platform deleted successfully");
+    public ResponseEntity<Result<Void, Error>> deletePlatform(@PathVariable Long id) {
+
+        Result<Void, Error> res = platformService.deletePlatform(id);
+        return ResponseEntity.status(resolveStatus(res)).body(res);
     }
 
     @PostMapping("/addGame")
-    public ResponseEntity<String> addGameToPlatform(@RequestParam Long gameId, @RequestParam Long platformId) {
-        platformService.assignGameToPlatform(gameId, platformId);
-        return ResponseEntity.ok("Game added to platform successfully");
+    public ResponseEntity<Result<Void, Error>> addGameToPlatform(@RequestParam Long gameId, @RequestParam Long platformId) {
+
+        Result<Void, Error> res = platformService.assignGameToPlatform(gameId, platformId);
+        return ResponseEntity.status(resolveStatus(res)).body(res);
     }
 
     @DeleteMapping("/deleteGame")
-    public ResponseEntity<String> deleteGameFromPlatform(@RequestParam Long gameId, @RequestParam Long platformId) {
-        platformService.deleteGameFromPlatform(gameId, platformId);
-        return ResponseEntity.ok("Game deleted from platform successfully");
+    public ResponseEntity<Result<Void, Error>> deleteGameFromPlatform(@RequestParam Long gameId,
+                                                                      @RequestParam Long platformId) {
+
+        Result<Void, Error> res = platformService.deleteGameFromPlatform(gameId, platformId);
+        return ResponseEntity.status(resolveStatus(res)).body(res);
     }
-
-
 }
