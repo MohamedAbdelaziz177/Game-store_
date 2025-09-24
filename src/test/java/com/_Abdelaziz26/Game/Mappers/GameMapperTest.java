@@ -8,6 +8,7 @@ import com._Abdelaziz26.Game.Model.Platform;
 import com._Abdelaziz26.Game.Repositories.GameRepository;
 import com._Abdelaziz26.Game.Repositories.GenreRepository;
 import com._Abdelaziz26.Game.Repositories.PlatformRepository;
+import com._Abdelaziz26.Game.Utility.CloudinaryService;
 import com._Abdelaziz26.Game.Utility.FileStorageService;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.AfterEach;
@@ -35,7 +36,7 @@ class GameMapperTest {
     private GameRepository gameRepository;
 
     @Mock
-    private FileStorageService fileStorageService;
+    private CloudinaryService cloudinaryService;
 
     @Mock
     private GenreRepository genreRepository;
@@ -72,7 +73,7 @@ class GameMapperTest {
         when(genreRepository.findById(1L)).thenReturn(java.util.Optional.of(genre));
         when(platformRepository.findById(1L)).thenReturn(Optional.of(platform1));
         when(platformRepository.findById(2L)).thenReturn(Optional.of(platform2));
-        when(fileStorageService.SaveImgAndGetUrl(any())).thenReturn("images/uuid");
+        when(cloudinaryService.upload(any())).thenReturn("images/uuid");
 
         Game game = gameMapper.fromDto(dto);
 
