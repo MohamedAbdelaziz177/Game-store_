@@ -9,6 +9,7 @@ import com._Abdelaziz26.Game.Model.Platform;
 import com._Abdelaziz26.Game.Repositories.GameRepository;
 import com._Abdelaziz26.Game.Repositories.GenreRepository;
 import com._Abdelaziz26.Game.Repositories.PlatformRepository;
+import com._Abdelaziz26.Game.Utility.CloudinaryService;
 import com._Abdelaziz26.Game.Utility.FileStorageService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class GameMapper {
 
-    private final FileStorageService fileStorageService;
+    private final CloudinaryService cloudinaryService;
     private final GenreRepository genreRepository;
     private final PlatformRepository platformRepository;
     private final GameRepository gameRepository;
@@ -40,7 +41,7 @@ public class GameMapper {
         });
 
         try {
-            game.setImageUrl(fileStorageService.SaveImgAndGetUrl(createGameDto.getImage()));
+            game.setImageUrl(cloudinaryService.upload(createGameDto.getImage()));
         }catch (Exception e){
             throw new RuntimeException(e);
         }
@@ -92,7 +93,7 @@ public class GameMapper {
         });
 
         try {
-            game.setImageUrl(fileStorageService.SaveImgAndGetUrl(updateGameDto.getImage()));
+            game.setImageUrl(cloudinaryService.upload(updateGameDto.getImage()));
         }catch (Exception e){
             throw new RuntimeException(e);
         }

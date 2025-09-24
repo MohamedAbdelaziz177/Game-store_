@@ -41,3 +41,8 @@ stripe:
   api:
     secretKey: ${STRIPE_SECRET}
 
+cloudinary:
+  cloud_name: ${CLOUDINARY_CLOUD_NAME}
+  api_key: ${CLOUDINARY_API_KEY}
+  secret_key: ${CLOUDINARY_SECRET}
+

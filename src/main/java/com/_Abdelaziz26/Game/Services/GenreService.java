@@ -26,6 +26,8 @@ public class GenreService {
         Genre newGenre = new Genre();
         newGenre.setName(genre);
         genreRepository.save(newGenre);
+
+        return Result.CreateSuccessResult(null);
     }
 
     @CacheEvict(value = "AllGenres", allEntries = true)
