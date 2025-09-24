@@ -14,6 +14,7 @@ env:
   STORAGE_DIR: ${{ secrets.STORAGE_DIR }}
   MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
   MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+  CLOUDINARY_URL: ${{secrets.CLOUDINARY_URL}}
 
 jobs:
   build:
@@ -46,7 +47,7 @@ jobs:
         run: mvn test
     needs: build
 
-  dockarize:
+  conatinerize:
     name: build Docker Img and Push to DockerHub
     runs-on: ubuntu-latest
     steps:
