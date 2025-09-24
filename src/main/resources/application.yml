@@ -37,7 +37,4 @@ spring:
       max-request-size: 10MB
       location: ${STORAGE_DIR}
 
-stripe:
-  api:
-    secretKey: ${STRIPE_SECRET}
 

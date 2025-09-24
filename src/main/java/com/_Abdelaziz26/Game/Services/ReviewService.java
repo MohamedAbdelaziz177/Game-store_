@@ -10,6 +10,9 @@ import com._Abdelaziz26.Game.Model.User;
 import com._Abdelaziz26.Game.Repositories.GameRepository;
 import com._Abdelaziz26.Game.Repositories.ReviewRepository;
 import com._Abdelaziz26.Game.Repositories.UserRepository;
+import com._Abdelaziz26.Game.Responses.Result_.Error;
+import com._Abdelaziz26.Game.Responses.Result_.Errors;
+import com._Abdelaziz26.Game.Responses.Result_.Result;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
@@ -19,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,59 +33,75 @@ public class ReviewService {
     private final GameRepository gameRepository;
     private final UserRepository userRepository;
 
-    public ReadReviewDto addReview(@AuthenticationPrincipal User user, CreateReviewDto createReviewDto, Long gameId) {
+    public Result<ReadReviewDto, Error> addReview(@AuthenticationPrincipal User user, CreateReviewDto createReviewDto, Long gameId) {
 
         Review review = reviewMapper.fromDto(createReviewDto, user, gameId);
-        return reviewMapper.toDto(reviewRepository.save(review));
+        return Result.CreateSuccessResult(reviewMapper.toDto(reviewRepository.save(review)));
     }
 
-    public List<ReadReviewDto> getAllGameReviews(Long gameId) {
+    public Result<List<ReadReviewDto>, Error> getAllGameReviews(Long gameId) {
 
-        Game game = gameRepository.findById(gameId).orElseThrow(() ->
-                new EntityNotFoundException("Game not found"));
+        Optional<Game> game = gameRepository.findById(gameId);
 
-        List<Review> reviews = reviewRepository.findByGame_Id(game.getId()).orElse(new ArrayList<>());
+        if(game.isEmpty())
+            return Result.CreateErrorResult(Errors.NotFoundErr("Game not found"));
 
-        return
-                reviews.stream().map(reviewMapper::toDto).toList();
+        List<Review> reviews = reviewRepository.findByGame_Id(game.get().getId()).orElse(new ArrayList<>());
+
+        return Result.CreateSuccessResult(reviews.stream().map(reviewMapper::toDto).toList());
+
     }
 
-    public List<ReadReviewDto> getAllUserReviews(Long userId) {
+    public Result<List<ReadReviewDto>, Error> getAllUserReviews(Long userId) {
 
-        User user = userRepository.findById(userId).orElseThrow(() ->
-                new EntityNotFoundException("User not found"));
+        Optional<User> user = userRepository.findById(userId);
 
-        List<Review> reviews = reviewRepository.findByUser_Id(user.getId()).orElse(new ArrayList<>());
+        if(user.isEmpty())
+            return Result.CreateErrorResult(Errors.NotFoundErr("user not found"));
 
-        return reviews.stream().map(reviewMapper::toDto).toList();
+        List<Review> reviews = reviewRepository.findByUser_Id(user.get().getId()).orElse(new ArrayList<>());
+
+        return Result.CreateSuccessResult(reviews.stream().map(reviewMapper::toDto).toList());
 
         // try -  return user.getReviews().stream().map(reviewMapper::toDto).toList();
     }
 
-    public ReadReviewDto updateReview(@AuthenticationPrincipal User user,
+    public Result<ReadReviewDto, Error> updateReview(@AuthenticationPrincipal User user,
                                       UpdateReviewDto updateReviewDto,
                                       Long reviewId) {
 
-        Review review = reviewRepository.findById(reviewId).orElseThrow(() ->
-                new EntityNotFoundException("Review not found"));
+        Optional<Review> review = reviewRepository.findById(reviewId);
 
-        if (!Objects.equals(review.getUser().getId(), user.getId())) {
-            throw new AccessDeniedException("You are not authorized to delete this review");
+        if(review.isEmpty())
+            return Result.CreateErrorResult(Errors.NotFoundErr("Review not found"));
+
+        if (!Objects.equals(review.get().getUser().getId(), user.getId())) {
+            return Result.CreateErrorResult(Errors.UnauthorizedErr("You are not authorized to update this review"));
         }
 
-        return reviewMapper.toDto(reviewRepository.save(reviewMapper.fromDto(updateReviewDto, reviewId)));
+        return Result
+                .CreateSuccessResult(reviewMapper
+                        .toDto(reviewRepository
+                                .save(reviewMapper.fromDto(updateReviewDto, reviewId)
+                                )
+                        )
+                );
     }
 
-    public void deleteReview(Long reviewId, @AuthenticationPrincipal User user) {
+    public Result<String, Error> deleteReview(Long reviewId, @AuthenticationPrincipal User user) {
 
-        Review review = reviewRepository.findById(reviewId).orElseThrow(() ->
-                new EntityNotFoundException("Review not found"));
+        Optional<Review> review = reviewRepository.findById(reviewId);
 
-        if (!Objects.equals(review.getUser().getId(), user.getId())) {
-            throw new AccessDeniedException("You are not authorized to delete this review");
+        if(review.isEmpty())
+            return Result.CreateErrorResult(Errors.NotFoundErr("Review not found"));
+
+        if (!Objects.equals(review.get().getUser().getId(), user.getId())) {
+            return Result.CreateErrorResult(Errors.UnauthorizedErr("You are not authorized to delete this review"));
         }
 
         reviewRepository.deleteById(reviewId);
+
+        return Result.CreateSuccessResult("Review deleted successfully");
     }
 
 }
