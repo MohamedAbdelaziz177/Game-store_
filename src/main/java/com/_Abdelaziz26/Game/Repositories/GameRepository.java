@@ -11,15 +11,4 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface GameRepository extends JpaRepository<Game, Long>, JpaSpecificationExecutor<Game> {
-
-    Page<Game> findByName(String name, Pageable pageable);
-
-    Page<Game> findGamesByNameContainingIgnoreCase(String name, Pageable pageable);
-
-    Page<Game> findByGenre_Id(Long genreId, Pageable pageable);
-
-
-    Page<Game> filterByGenreAndPlatforms(Specification<Game> specification, Pageable pageable);
-
-
 }
