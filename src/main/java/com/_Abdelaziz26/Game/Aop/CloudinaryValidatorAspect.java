@@ -1,4 +1,4 @@
-package com._Abdelaziz26.Game.AOP;
+package com._Abdelaziz26.Game.Aop;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -16,7 +15,7 @@ import java.util.Optional;
 @Component
 public class CloudinaryValidatorAspect {
 
-    @Before("@annotation(com._Abdelaziz26.Game.AOP.CloudinaryValidatorProxy)")
+    @Before("@annotation(com._Abdelaziz26.Game.Aop.CloudinaryValidatorProxy)")
     public void validateImage(JoinPoint joinPoint) throws IOException {
         Optional<Object> maybeFile = Arrays.stream(joinPoint.getArgs())
                 .filter(arg -> arg instanceof MultipartFile)

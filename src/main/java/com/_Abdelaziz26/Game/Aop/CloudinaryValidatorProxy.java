@@ -1,4 +1,4 @@
-package com._Abdelaziz26.Game.AOP;
+package com._Abdelaziz26.Game.Aop;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
