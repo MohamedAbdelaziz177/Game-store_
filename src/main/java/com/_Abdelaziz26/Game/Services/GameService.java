@@ -126,7 +126,7 @@ public class GameService {
         Pageable pageable = getPageAndSorting(pageIndex, pageSize, sortField, sortDirection);
         Specification<Game> specs = GameSpecifications.getSpecifications(filters);
 
-        Page<Game> games = gameRepository.filterByGenreAndPlatforms(specs, pageable);
+        Page<Game> games = gameRepository.findAll(specs, pageable);
 
         return Result.CreateSuccessResult(games
                 .stream()

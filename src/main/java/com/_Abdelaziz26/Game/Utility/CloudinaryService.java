@@ -1,6 +1,6 @@
 package com._Abdelaziz26.Game.Utility;
 
-import com._Abdelaziz26.Game.AOP.CloudinaryValidatorProxy;
+import com._Abdelaziz26.Game.Aop.CloudinaryValidatorProxy;
 import com.cloudinary.Cloudinary;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
