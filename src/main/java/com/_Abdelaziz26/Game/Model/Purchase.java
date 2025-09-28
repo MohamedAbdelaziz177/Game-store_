@@ -34,4 +34,7 @@ public class Purchase {
     @JoinColumn(name = "user-id")
     private User user;
 
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "purchase")
+    private Licence licence;
+
 }
