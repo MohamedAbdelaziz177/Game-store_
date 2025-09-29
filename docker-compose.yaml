@@ -1,23 +1,23 @@
 services:
-  game:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: game_container
-    ports:
-      - '8080:8080'
-    depends_on:
-      - postgres
-      - redis
-    restart: unless-stopped
-    networks:
-      - spring_app_network
-
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
-    env_file:
-      - .env
-
+  #game:
+  #  build:
+  #    context: .
+  #    dockerfile: Dockerfile
+  #  container_name: game_container
+  #  ports:
+  #    - '8080:8080'
+  #  depends_on:
+  #    - postgres
+  #    - redis
+  #  restart: unless-stopped
+  #  networks:
+  #    - spring_app_network
+#
+  #  environment:
+  #    - SPRING_PROFILES_ACTIVE=docker
+  #  env_file:
+  #    - .env
+#
   postgres:
     image: 'postgres:latest'
     container_name: game_db
