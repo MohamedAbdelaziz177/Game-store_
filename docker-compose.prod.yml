@@ -1,0 +1,15 @@
+services:
+  game:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: game_container
+    ports:
+      - '8080:8080'
+    restart: always
+    networks:
+      - spring_app_network
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+    env_file:
+      - .env.prod

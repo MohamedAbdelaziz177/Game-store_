@@ -72,6 +72,9 @@ public class User implements UserDetails{
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Purchase> purchases;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Licence> licences;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles;
