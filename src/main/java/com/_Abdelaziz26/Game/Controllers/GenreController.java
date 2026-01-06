@@ -18,13 +18,13 @@ public class GenreController extends _AbdelazizController {
 
     private final GenreService genreService;
 
-    @PostMapping
+    @PostMapping("/add")
     public ResponseEntity<Result<String, Error>> addGenre(@RequestBody Map<String, String> map) {
         genreService.addGenre(map.get("genre"));
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @DeleteMapping
+    @DeleteMapping("/delete")
     public ResponseEntity<Result<String, Error>> removeGenre(@RequestParam Map<String, String> map) {
 
         Result<String, Error> res = genreService.removeGenre(map.get("genre"));
