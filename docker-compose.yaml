@@ -28,7 +28,7 @@ services:
     ports:
       - '5432:5432'
     volumes:
-      - gameVol:/var/lib/postgresql/data
+      - gameVol:/var/lib/postgresql
     restart: unless-stopped
 
     networks:
